@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Password Generator | aznal.com</title>
+<meta name="description" content="Generate strong, secure passwords instantly with aznal.com. CSPRNG-based, customisable length, symbols, numbers, and more.">
+<style>:root{--bg:#0d1117;--card:#1c2128;--p:#22d3ee;--t:#e6edf3;--t2:#8d96a0;--bd:#30363d;--rad:6px}*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--t);line-height:1.6;display:flex;flex-direction:column;min-height:100vh;align-items:center;padding:20px}.container{max-width:520px;width:100%;margin:40px auto}h1{text-align:center;color:var(--p);font-size:1.6rem;margin-bottom:6px}.sub{text-align:center;color:var(--t2);font-size:0.9rem;margin-bottom:24px}.output-box{background:var(--card);border:2px solid var(--bd);border-radius:var(--rad);padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;font-family:monospace;font-size:1.1rem;word-break:break-all;min-height:60px}.output-box .pwd{color:var(--t);flex:1;margin-right:10px}.output-box .copy{background:var(--p);color:#000;border:none;border-radius:4px;padding:6px 14px;cursor:pointer;font-weight:600;font-size:0.8rem}.controls{background:var(--card);border:1px solid var(--bd);border-radius:var(--rad);padding:20px;margin-bottom:16px}.control-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.control-row label{color:var(--t);font-size:0.9rem}.control-row input[type="checkbox"]{accent-color:var(--p);width:18px;height:18px}.control-row input[type="range"]{width:140px;accent-color:var(--p)}.length-val{color:var(--p);font-weight:600;min-width:30px;text-align:right}.generate-btn{width:100%;background:var(--p);color:#000;border:none;border-radius:var(--rad);padding:14px;font-size:1rem;font-weight:700;cursor:pointer;margin-bottom:16px}.strength{text-align:center;font-size:0.85rem;padding:8px;border-radius:var(--rad);margin-bottom:16px}.strength.weak{background:rgba(239,68,68,0.15);color:#ef4444}.strength.medium{background:rgba(250,204,21,0.15);color:#eab308}.strength.strong{background:rgba(34,211,238,0.15);color:#22d3ee}.strength.very-strong{background:rgba(52,211,153,0.15);color:#34d399}footer{text-align:center;color:var(--t2);font-size:0.8rem;padding:20px;margin-top:auto}</style></head>
+<body>
+<div class="container">
+<h1>Aznal Password Generator</h1>
+<p class="sub">Strong, secure passwords generated in your browser</p>
+<div class="output-box"><span class="pwd" id="password">Click Generate</span><button class="copy" onclick="copyPwd()">Copy</button></div>
+<div class="controls">
+<div class="control-row"><label>Password Length</label><input type="range" id="length" min="6" max="64" value="16" oninput="updateLen()"><span class="length-val" id="lenVal">16</span></div>
+<div class="control-row"><label>Uppercase (A-Z)</label><input type="checkbox" id="upper" checked></div>
+<div class="control-row"><label>Lowercase (a-z)</label><input type="checkbox" id="lower" checked></div>
+<div class="control-row"><label>Numbers (0-9)</label><input type="checkbox" id="numbers" checked></div>
+<div class="control-row"><label>Symbols (!@#$%^&*)</label><input type="checkbox" id="symbols"></div>
+<div class="control-row"><label>Exclude Ambiguous</label><input type="checkbox" id="ambiguous" checked></div>
+</div>
+<button class="generate-btn" onclick="generate()">Generate Password</button>
+<div id="strength" class="strength medium">Medium</div>
+<footer><p>(c) 2026 aznal.com - CSPRNG password generation</p></footer>
+</div>
+<script>
+function updateLen(){var l=document.getElementById('length').value;document.getElementById('lenVal').textContent=l}
+function generate(){var len=parseInt(document.getElementById('length').value);var upper='ABCDEFGHIJKLMNOPQRSTUVWXYZ',lower='abcdefghijklmnopqrstuvwxyz',nums='0123456789',sym='!@#$%^&*()_+-=[]{}|;:,.<>?';var amb='O0Il1|';var chars='';if(document.getElementById('upper').checked)chars+=upper;if(document.getElementById('lower').checked)chars+=lower;if(document.getElementById('numbers').checked)chars+=nums;if(document.getElementById('symbols').checked)chars+=sym;if(document.getElementById('ambiguous').checked){for(var i=0;i<amb.length;i++)chars=chars.split(amb[i]).join('')}if(!chars){document.getElementById('password').textContent='Select at least one set';return}var pwd='';var arr=new Uint32Array(len);crypto.getRandomValues(arr);for(var i=0;i<len;i++)pwd+=chars[arr[i]%chars.length];document.getElementById('password').textContent=pwd;var entropy=Math.log2(chars.length)*len;var el=document.getElementById('strength');if(entropy<30){el.textContent='Weak';el.className='strength weak'}else if(entropy<50){el.textContent='Medium';el.className='strength medium'}else if(entropy<70){el.textContent='Strong';el.className='strength strong'}else{el.textContent='Very Strong';el.className='strength very-strong'}}
+function copyPwd(){var p=document.getElementById('password').textContent;navigator.clipboard.writeText(p).then(function(){document.querySelector('.copy').textContent='Copied!';setTimeout(function(){document.querySelector('.copy').textContent='Copy'},1500)}).catch(function(){alert('Copy failed')})}
+generate();
+</script>
+</body>
+</html>
